@@ -37,8 +37,10 @@ export default function CommunityPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-4xl font-bold text-white">Our Community</h1>
+      <div className="container mx-auto px-4 py-8 ">
+        <h1 className="mb-8 text-4xl font-bold text-white mt-14">
+          Our Community
+        </h1>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {members.map((member, index) => (
             <Card key={index} className="bg-zinc-900 border-zinc-800">

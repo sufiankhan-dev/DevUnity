@@ -37,14 +37,12 @@ export default function QuestionPage() {
       votes: 3,
       answers: 1,
     },
-    // Add more questions as needed
   ]);
 
   const [newQuestion, setNewQuestion] = useState({ title: "", content: "" });
 
   const handleNewQuestion = (e: any) => {
     e.preventDefault();
-    // Add new question logic here
     console.log("New question:", newQuestion);
     setNewQuestion({ title: "", content: "" });
   };
@@ -52,10 +50,21 @@ export default function QuestionPage() {
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-4xl font-bold text-white">Questions</h1>
+        <div className="flex flex-row items-center justify-between mt-12 md:mt-14 mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold text-white">
+            Questions
+          </h1>
 
-        {/* Ask a Question Form */}
-        <Card className="mb-8 bg-zinc-900 border-zinc-800">
+          <Button
+            type="submit"
+            className="bg-[#9CE630] text-black hover:bg-[#8BD520]"
+          >
+            <PenSquare className="mr-2 h-4 w-4" />
+            Post Question
+          </Button>
+        </div>
+
+        {/* <Card className="mb-8 bg-zinc-900 border-zinc-800">
           <CardHeader>
             <CardTitle className="text-white">Ask a Question</CardTitle>
           </CardHeader>
@@ -86,9 +95,8 @@ export default function QuestionPage() {
               </Button>
             </form>
           </CardContent>
-        </Card>
+        </Card> */}
 
-        {/* List of Questions */}
         <div className="space-y-6">
           {questions.map((question) => (
             <Card key={question.id} className="bg-zinc-900 border-zinc-800">
@@ -98,8 +106,8 @@ export default function QuestionPage() {
               <CardContent>
                 <p className="text-zinc-400">{question.content}</p>
               </CardContent>
-              <CardFooter className="flex justify-between items-center">
-                <div className="flex items-center space-x-4">
+              <CardFooter className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div className="flex items-center space-x-4 mb-3">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={question.avatar} alt={question.author} />
                     <AvatarFallback>

@@ -24,7 +24,9 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-4xl font-bold text-white">Explore Topics</h1>
+        <h1 className="mb-8 text-4xl font-bold text-white mt-14">
+          Explore Topics
+        </h1>
         <div className="mb-8">
           <Input
             className="bg-zinc-900 border-zinc-700 text-white placeholder-zinc-400"

@@ -42,8 +42,10 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-white">Blog Posts</h1>
+        <div className="flex justify-between items-center mb-8 mt-12 md:mt-14">
+          <h1 className="text-2xl md:text-4xl font-bold text-white">
+            Blog Posts
+          </h1>
           <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520]">
             <PenSquare className="mr-2 h-4 w-4" />
             Create New Post

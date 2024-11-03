@@ -17,7 +17,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/70 to-zinc-950" />
       </div>
 
-      <div className="container relative z-10 mx-auto px-4 py-24 md:py-32 text-center">
+      <div className="container relative z-10 mx-auto px-4 py-24 md:py-32 mt-16 text-center">
         <div className="animate-fade-in-up">
           <h1 className="mb-6 text-4xl font-bold text-white md:text-6xl lg:text-7xl">
             Developer <span className="text-[#9CE630]">Community</span>,
