@@ -36,7 +36,6 @@ export default function BlogPage() {
       date: "2024-03-05",
       avatar: "/placeholder.svg?height=50&width=50",
     },
-    // Add more blog posts as needed
   ];
 
   return (

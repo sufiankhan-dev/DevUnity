@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Github, Linkedin } from "lucide-react";
@@ -32,7 +31,6 @@ export default function CommunityPage() {
       github: "https://github.com/carolwilliams",
       linkedin: "https://linkedin.com/in/carolwilliams",
     },
-    // Add more members as needed
   ];
 
   return (
