@@ -6,30 +6,30 @@ import { Github, Linkedin } from "lucide-react";
 export default function CommunityPage() {
   const members = [
     {
-      name: "Alice Johnson",
+      name: "Abeer Khan",
       role: "Frontend Developer",
       description:
         "Passionate about creating beautiful and accessible user interfaces.",
       avatar: "/placeholder.svg?height=100&width=100",
-      github: "https://github.com/alicejohnson",
-      linkedin: "https://linkedin.com/in/alicejohnson",
+      github: "",
+      linkedin: "",
     },
     {
-      name: "Bob Smith",
+      name: "Ahmed Khan",
       role: "Backend Engineer",
       description: "Experienced in building scalable server-side applications.",
       avatar: "/placeholder.svg?height=100&width=100",
-      github: "https://github.com/bobsmith",
-      linkedin: "https://linkedin.com/in/bobsmith",
+      github: "",
+      linkedin: "",
     },
     {
-      name: "Carol Williams",
+      name: "Sufian Khan",
       role: "Full Stack Developer",
       description:
         "Loves working on end-to-end solutions and learning new technologies.",
       avatar: "/placeholder.svg?height=100&width=100",
-      github: "https://github.com/carolwilliams",
-      linkedin: "https://linkedin.com/in/carolwilliams",
+      github: "https://github.com/sufiankhan-dev",
+      linkedin: "https://www.linkedin.com/in/sufian-khan-dev",
     },
   ];
 

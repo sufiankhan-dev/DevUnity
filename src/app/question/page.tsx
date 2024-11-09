@@ -20,7 +20,7 @@ export default function QuestionPage() {
       title: "How to optimize React performance?",
       content:
         "I'm working on a large React application and noticed some performance issues. What are some best practices for optimizing React performance?",
-      author: "Alice Johnson",
+      author: "Abeer Khan",
       avatar: "/placeholder.svg?height=50&width=50",
       date: "2024-03-15",
       votes: 5,
@@ -31,7 +31,7 @@ export default function QuestionPage() {
       title: "Difference between useEffect and useLayoutEffect",
       content:
         "Can someone explain the key differences between useEffect and useLayoutEffect hooks in React? When should I use one over the other?",
-      author: "Bob Smith",
+      author: "Ahmed Khan",
       avatar: "/placeholder.svg?height=50&width=50",
       date: "2024-03-14",
       votes: 3,

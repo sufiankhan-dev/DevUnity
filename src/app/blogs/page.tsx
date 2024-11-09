@@ -16,7 +16,7 @@ export default function BlogPage() {
       title: "Getting Started with React Hooks",
       excerpt:
         "Learn how to use React Hooks to simplify your components and manage state more efficiently.",
-      author: "Alice Johnson",
+      author: "Abeer Khan",
       date: "2024-03-15",
       avatar: "/placeholder.svg?height=50&width=50",
     },
@@ -24,7 +24,7 @@ export default function BlogPage() {
       title: "Building Scalable APIs with Node.js",
       excerpt:
         "Discover best practices for creating robust and scalable backend services using Node.js and Express.",
-      author: "Bob Smith",
+      author: "Sufian Khan",
       date: "2024-03-10",
       avatar: "/placeholder.svg?height=50&width=50",
     },
@@ -32,7 +32,7 @@ export default function BlogPage() {
       title: "Introduction to GraphQL",
       excerpt:
         "Explore the benefits of GraphQL and how it can improve your API development process.",
-      author: "Carol Williams",
+      author: "Ahmed Khan",
       date: "2024-03-05",
       avatar: "/placeholder.svg?height=50&width=50",
     },

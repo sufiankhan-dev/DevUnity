@@ -36,9 +36,9 @@ const Hero = () => {
             knowledge, and build connections in a collaborative environment.
           </p>
           <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-x-4 md:space-y-0">
-            <Button className="h-12 z-10 px-8 bg-[#9CE630] text-black hover:bg-[#8BD520] flex flex-row items-center justify-center">
-              Join Community
-              <span className="ml-2 rounded-full bg-black/10 px-2 py-0.5 text-sm">
+            <Button className="relative h-12 z-10 px-8 bg-[linear-gradient(110deg,#9CE630,45%,#8BD520,55%,#9CE630)] bg-[length:200%_100%] animate-shimmer text-black flex items-center justify-center rounded-md transition-colors hover:bg-[#8BD520] border-none">
+              <span className="relative z-10">Join Community</span>
+              <span className="ml-2 rounded-full bg-black/10 px-2 py-0.5 text-sm relative z-10">
                 Free
               </span>
             </Button>
