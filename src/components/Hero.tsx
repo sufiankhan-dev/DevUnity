@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -10,7 +11,8 @@ const Hero = () => {
         <Image
           src="/background-pattern.png"
           alt="Background Pattern"
-          layout="fill"
+          fill
+          style={{ objectFit: "cover" }}
           objectFit="cover"
           quality={100}
         />
@@ -40,10 +42,12 @@ const Hero = () => {
                 Free
               </span>
             </Button>
-            <Button className="h-12 z-10 px-8 border-2 border-[#9CE630] bg-transparent text-[#9CE630] hover:bg-[#9CE630] hover:text-black flex flex-row items-center justify-center">
-              <Github className="mr-2 h-5 w-5" />
-              Star on GitHub
-            </Button>
+            <Link href={"https://github.com/sufiankhan-dev/DevUnity"}>
+              <Button className="h-12 z-10 px-8 border-2 border-[#9CE630] bg-transparent text-[#9CE630] hover:bg-[#9CE630] hover:text-black flex flex-row items-center justify-center">
+                <Github className="mr-2 h-5 w-5" />
+                Star on GitHub
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
