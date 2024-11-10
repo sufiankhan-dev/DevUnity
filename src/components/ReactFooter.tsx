@@ -10,30 +10,44 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white">DevUnity</h3>
-            <p className="text-sm">Building the future of developer communities together.</p>
+            <h3 className="text-xl font-bold text-[#9CE630]">DevUnity</h3>
+            <p className="text-sm">
+              Building the future of developer communities together.
+            </p>
           </div>
 
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-white">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/about" className="hover:text-white transition-colors">
+                <Link
+                  href="/about"
+                  className="hover:text-white transition-colors"
+                >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/community" className="hover:text-white transition-colors">
+                <Link
+                  href="/community"
+                  className="hover:text-white transition-colors"
+                >
                   Community
                 </Link>
               </li>
               <li>
-                <Link href="/blogs" className="hover:text-white transition-colors">
+                <Link
+                  href="/blogs"
+                  className="hover:text-white transition-colors"
+                >
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/question" className="hover:text-white transition-colors">
+                <Link
+                  href="/question"
+                  className="hover:text-white transition-colors"
+                >
                   Questions
                 </Link>
               </li>
@@ -44,17 +58,26 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-medium text-white">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
+                <Link
+                  href="/privacy"
+                  className="hover:text-white transition-colors"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
+                <Link
+                  href="/terms"
+                  className="hover:text-white transition-colors"
+                >
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="hover:text-white transition-colors">
+                <Link
+                  href="/cookies"
+                  className="hover:text-white transition-colors"
+                >
                   Cookie Policy
                 </Link>
               </li>
@@ -64,24 +87,24 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-white">Connect</h3>
             <div className="flex space-x-4">
-              <Link 
-                href="https://github.com/devunity" 
+              <Link
+                href="https://github.com/devunity"
                 className="hover:text-[#9CE630] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Github className="w-6 h-6" />
               </Link>
-              <Link 
-                href="https://twitter.com/devunity" 
+              <Link
+                href="https://twitter.com/devunity"
                 className="hover:text-[#9CE630] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Twitter className="w-6 h-6" />
               </Link>
-              <Link 
-                href="https://linkedin.com/company/devunity" 
+              <Link
+                href="https://linkedin.com/company/devunity"
                 className="hover:text-[#9CE630] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -94,15 +117,26 @@ const Footer: React.FC = () => {
 
         <div className="pt-8 mt-8 border-t border-zinc-800">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm">&copy; {new Date().getFullYear()} DevUnity. All rights reserved.</p>
+            <p className="text-sm">
+              &copy; {new Date().getFullYear()} DevUnity. All rights reserved.
+            </p>
             <div className="flex space-x-4 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-sm hover:text-white transition-colors">
+              <Link
+                href="/privacy"
+                className="text-sm hover:text-white transition-colors"
+              >
                 Privacy
               </Link>
-              <Link href="/terms" className="text-sm hover:text-white transition-colors">
+              <Link
+                href="/terms"
+                className="text-sm hover:text-white transition-colors"
+              >
                 Terms
               </Link>
-              <Link href="/contact" className="text-sm hover:text-white transition-colors">
+              <Link
+                href="/contact"
+                className="text-sm hover:text-white transition-colors"
+              >
                 Contact
               </Link>
             </div>
