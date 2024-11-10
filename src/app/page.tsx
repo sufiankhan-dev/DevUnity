@@ -11,7 +11,6 @@ import { MessageSquare, Users, BookOpen, Github } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
-import Footer from "@/components/Footer";
 import OpenSourceSection from "@/components/OpenSource";
 
 export default function Component() {
