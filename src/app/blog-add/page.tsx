@@ -7,7 +7,6 @@ export default function AddBlogPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
-    excerpt: "",
     content: "",
     author: "",
     avatar: "",
@@ -56,13 +55,6 @@ export default function AddBlogPage() {
           onChange={handleChange}
           className="border rounded p-2 w-full mb-4"
           required
-        />
-        <textarea
-          name="excerpt"
-          placeholder="Excerpt"
-          value={formData.excerpt}
-          onChange={handleChange}
-          className="border rounded p-2 w-full mb-4"
         />
         <textarea
           name="content"
