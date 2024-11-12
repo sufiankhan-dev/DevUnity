@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PenSquare } from "lucide-react";
 
 interface BlogPost {
+  _id: any;
   title: string;
   content: string;
   author: string;
@@ -52,12 +53,14 @@ const BlogCard = ({ post }: { post: BlogPost }) => {
             </p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          className="text-[#9CE630] hover:text-[#8BD520] hover:bg-zinc-800"
-        >
-          Read More
-        </Button>
+        <Link href={`/blogs/${post._id}`}>
+          <Button
+            variant="ghost"
+            className="text-[#9CE630] hover:text-[#8BD520] hover:bg-zinc-800"
+          >
+            Read More
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );
