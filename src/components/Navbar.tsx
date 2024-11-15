@@ -12,15 +12,23 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
+import { useUser, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { isSignedIn, user } = useUser();
 
   const closeSheet = () => setIsOpen(false);
 
   const linkClasses = (path: any) =>
     pathname === path ? "text-white" : "text-zinc-400 hover:text-white";
+
+  const hiddenRoutes = ["/sign-in", "/sign-up"];
+
+  if (hiddenRoutes.includes(pathname)) {
+    return null;
+  }
 
   return (
     <nav className="border-b z-50 absolute w-full bg-black/50 border-zinc-800">
@@ -29,7 +37,7 @@ const Navbar = () => {
           <Users className="h-8 w-8 text-[#9CE630]" />
           <span className="text-xl font-bold text-white">DevUnity</span>
         </Link>
-        <div className="hidden lg:flex items-center space-x-6">
+        <div className="hidden lg:flex items-center space-x-6 flex-grow justify-center">
           {/* <Link className={linkClasses("/explore")} href="/explore">
             Explore
           </Link> */}
@@ -47,12 +55,27 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex items-center space-x-4">
-          <Button className="text-gray-700 hover:text-black bg-white hover:bg-white/80 ">
-            Sign in
-          </Button>
-          <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520] hidden lg:block">
-            Sign up
-          </Button>
+          {isSignedIn ? (
+            <div className="flex justify-center items-center">
+              <UserButton />
+              <span className="font-semibold text-gray-100 text-base ml-3 hidden lg:block">
+                {user.fullName}
+              </span>
+            </div>
+          ) : (
+            <>
+              <Link href={"/sign-in"}>
+                <Button className="text-gray-700 hover:text-black bg-white hover:bg-white/80">
+                  Sign in
+                </Button>
+              </Link>
+              <Link href={"/sign-up"}>
+                <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520] hidden lg:block">
+                  Sign up
+                </Button>
+              </Link>
+            </>
+          )}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="lg:hidden">
               <CgMenuRight className="h-6 w-6 text-white" />
@@ -103,12 +126,14 @@ const Navbar = () => {
                 >
                   About
                 </Link>
-                <Button
-                  className="bg-[#9CE630] text-black hover:bg-[#8BD520] w-full mt-4"
-                  onClick={closeSheet}
-                >
-                  Sign up
-                </Button>
+                {!isSignedIn && (
+                  <Button
+                    className="bg-[#9CE630] text-black hover:bg-[#8BD520] w-full mt-4"
+                    onClick={closeSheet}
+                  >
+                    Sign up
+                  </Button>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
