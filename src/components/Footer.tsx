@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 const Footer: React.FC = () => {
   const pathname = usePathname();
 
-  const hiddenRoutes = ["/sign-in", "/sign-up"];
+  const hiddenRoutes = ["/sign-in", "/sign-up", "/complete-profile"];
 
   if (hiddenRoutes.includes(pathname)) {
     return null;
