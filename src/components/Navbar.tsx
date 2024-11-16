@@ -24,7 +24,7 @@ const Navbar = () => {
   const linkClasses = (path: any) =>
     pathname === path ? "text-white" : "text-zinc-400 hover:text-white";
 
-  const hiddenRoutes = ["/sign-in", "/sign-up"];
+  const hiddenRoutes = ["/sign-in", "/sign-up", "/complete-profile"];
 
   if (hiddenRoutes.includes(pathname)) {
     return null;
