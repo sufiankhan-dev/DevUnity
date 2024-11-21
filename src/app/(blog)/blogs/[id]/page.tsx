@@ -72,7 +72,7 @@ export default function BlogPostPage() {
           <CardContent className="pt-6">
             <p className="text-red-500 text-center">{error}</p>
             <div className="mt-4 text-center">
-              <Link href="/blog">
+              <Link href="/blogs">
                 <Button variant="outline" className="mt-4">
                   <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog List
                 </Button>
@@ -87,7 +87,7 @@ export default function BlogPostPage() {
   return (
     <div className="min-h-screen bg-zinc-950 py-12">
       <div className="container mx-auto px-4">
-        <Link href="/blog">
+        <Link href="/blogs">
           <Button variant="outline" className="mb-6">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog List
           </Button>
