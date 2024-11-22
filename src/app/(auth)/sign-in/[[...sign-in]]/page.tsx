@@ -16,7 +16,7 @@ const SignInPage = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/70 to-zinc-950" />
       </div>
 
-      <div className="container mx-auto px-4 py-16 flex flex-col lg:flex-row items-center justify-between relative z-10">
+      <div className="container mx-auto px-4 md:px-8 py-16 flex flex-col lg:flex-row items-center justify-between relative z-10">
         <div className="lg:w-1/2 text-white mb-12 lg:mb-0 hidden lg:block">
           <h1 className="text-4xl font-bold mb-6">
             Welcome Back to <span className="text-[#9CE630]">DevUnity</span>
