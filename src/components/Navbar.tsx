@@ -127,12 +127,14 @@ const Navbar = () => {
                   About
                 </Link>
                 {!isSignedIn && (
-                  <Button
-                    className="bg-[#9CE630] text-black hover:bg-[#8BD520] w-full mt-4"
-                    onClick={closeSheet}
-                  >
-                    Sign up
-                  </Button>
+                  <Link href={"sign-up"}>
+                    <Button
+                      className="bg-[#9CE630] text-black hover:bg-[#8BD520] w-full mt-4"
+                      onClick={closeSheet}
+                    >
+                      Sign up
+                    </Button>
+                  </Link>
                 )}
               </nav>
             </SheetContent>
