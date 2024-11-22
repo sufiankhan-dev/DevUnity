@@ -83,3 +83,78 @@
 .animation-delay-1000 {
   animation-delay: 1s;
 }
+
+.ProseMirror h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  color: #ffffff;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  color: #ffffff;
+}
+
+.ProseMirror h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  color: #ffffff;
+}
+
+.ProseMirror p {
+  margin-bottom: 0.5em;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.ProseMirror pre {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  padding: 0.75em;
+  border-radius: 0.25em;
+  margin-bottom: 0.5em;
+  overflow-x: auto;
+}
+
+.ProseMirror code {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25em;
+}
+
+.ProseMirror blockquote {
+  border-left: 4px solid #4a5568;
+  padding-left: 1em;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+}
+
+.ProseMirror a {
+  color: #9ce630;
+  text-decoration: underline;
+}
+
+.ProseMirror a:hover {
+  color: #8bd520;
+}
