@@ -77,7 +77,6 @@ export default function AddBlogPage() {
       }
     } catch (error) {
       console.error("Error submitting blog:", error);
-      // You might want to show an error message to the user here
     } finally {
       setLoading(false);
     }

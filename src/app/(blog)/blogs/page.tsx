@@ -12,7 +12,11 @@
 // } from "@/components/ui/card";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // import { Skeleton } from "@/components/ui/skeleton";
-// import { PenSquare } from "lucide-react";
+// import { Calendar, PenSquare } from "lucide-react";
+// import { useUser } from "@clerk/nextjs";
+// import { useRouter } from "next/navigation";
+// import toast, { Toaster } from "react-hot-toast";
+// import DOMPurify from "dompurify";
 
 // interface BlogPost {
 //   _id: any;
@@ -48,7 +52,8 @@
 //           </Avatar>
 //           <div>
 //             <p className="text-sm font-medium text-white">{post.author}</p>
-//             <p className="text-xs text-zinc-400">
+//             <p className="text-xs text-zinc-400 flex items-center mt-1">
+//               <Calendar className="mr-1 h-3 w-3" />
 //               {new Date(post.date).toLocaleDateString()}
 //             </p>
 //           </div>
@@ -93,6 +98,8 @@
 // const BlogPage = () => {
 //   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 //   const [isLoading, setIsLoading] = useState(true);
+//   const { isSignedIn } = useUser();
+//   const router = useRouter();
 
 //   useEffect(() => {
 //     const fetchBlogPosts = async () => {
@@ -110,19 +117,38 @@
 //     fetchBlogPosts();
 //   }, []);
 
+//   const handlePostBlog = () => {
+//     if (isSignedIn) {
+//       router.push("/blog-add");
+//     } else {
+//       toast.error("You must be logged in to post a blog.", {
+//         duration: 3000,
+//         position: "top-center",
+//         style: {
+//           background: "#333",
+//           color: "#fff",
+//           border: "1px solid #9CE630",
+//         },
+//       });
+//     }
+//   };
+
 //   return (
 //     <div className="min-h-screen bg-zinc-950">
+//       <Toaster />
 //       <div className="container mx-auto px-4 py-8">
 //         <div className="flex justify-between items-center mb-8 mt-12 md:mt-14">
 //           <h1 className="text-2xl md:text-4xl font-bold text-white">
-//             Blog Posts
+//             Developer Insights
 //           </h1>
-//           <Link href="/blog-add">
-//             <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520]">
-//               <PenSquare className="mr-2 h-4 w-4" />
-//               Post Blog
-//             </Button>
-//           </Link>
+//           <Button
+//             className="bg-[#9CE630] text-black hover:bg-[#8BD520]"
+//             onClick={handlePostBlog}
+//           >
+//             <PenSquare className="h-4 w-4" />
+//             <span className="hidden md:block">Share Your Knowledge</span>
+//             {/* <span className="md:hidden">Post Blog</span> */}
+//           </Button>
 //         </div>
 
 //         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-10">
@@ -159,6 +185,7 @@ import { Calendar, PenSquare } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
+import DOMPurify from "isomorphic-dompurify";
 
 interface BlogPost {
   _id: any;
@@ -170,13 +197,16 @@ interface BlogPost {
 }
 
 const BlogCard = ({ post }: { post: BlogPost }) => {
+  const sanitizedContent = DOMPurify.sanitize(post.content);
+  const plainTextContent = sanitizedContent.replace(/<[^>]+>/g, "");
+
   return (
     <Card className="bg-zinc-900 border-zinc-800 flex flex-col">
       <CardHeader>
         <CardTitle className="text-white">{post.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow">
-        <p className="text-zinc-400 line-clamp-2">{post.content}</p>
+        <p className="text-zinc-400 line-clamp-3">{plainTextContent}</p>
       </CardContent>
       <CardFooter className="flex justify-between items-center mt-auto">
         <div className="flex items-center space-x-2">
@@ -220,6 +250,7 @@ const SkeletonCard = () => {
         <Skeleton className="h-6 w-2/3 bg-zinc-800" />
       </CardHeader>
       <CardContent className="flex-grow">
+        <Skeleton className="h-4 w-full bg-zinc-800 mb-2" />
         <Skeleton className="h-4 w-full bg-zinc-800 mb-2" />
         <Skeleton className="h-4 w-4/5 bg-zinc-800" />
       </CardContent>
@@ -287,9 +318,9 @@ const BlogPage = () => {
             className="bg-[#9CE630] text-black hover:bg-[#8BD520]"
             onClick={handlePostBlog}
           >
-            <PenSquare className="h-4 w-4" />
-            <span className="hidden md:block">Share Your Knowledge</span>
-            {/* <span className="md:hidden">Post Blog</span> */}
+            <PenSquare className="mr-2 h-4 w-4" />
+            <span className="hidden md:inline-block">Share Your Knowledge</span>
+            <span className="md:hidden">Post</span>
           </Button>
         </div>
 
