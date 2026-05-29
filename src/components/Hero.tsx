@@ -1,49 +1,69 @@
-import { Button } from "@/components/ui/button";
-import { Github } from "lucide-react";
-import Link from "next/link";
-import { BackgroundPattern } from "@/components/BackgroundPattern";
-
-const Hero = () => {
-  return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <BackgroundPattern />
-      </div>
-
-      <div className="container relative z-10 mx-auto px-4 py-24 md:py-32 mt-16 text-center">
-        <div className="animate-fade-in-up">
-          <h1 className="mb-6 text-4xl font-bold text-white md:text-6xl lg:text-7xl">
-            Developer <span className="text-[#9CE630]">Community</span>,
-            <br />
-            finally{" "}
-            <span className="relative inline-block">
-              unified
-              <span className="absolute bottom-0 left-0 w-full h-2 bg-[#9CE630] transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100"></span>
-            </span>
-            .
-          </h1>
-          <p className="mb-8 text-lg text-zinc-400 md:text-xl max-w-3xl mx-auto">
-            Join a thriving community of developers. Ask questions, share
-            knowledge, and build connections in a collaborative environment.
-          </p>
-          <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-x-4 md:space-y-0">
-            <Button className="relative h-12 z-10 px-8 bg-[linear-gradient(110deg,#9CE630,45%,#8BD520,55%,#9CE630)] bg-[length:200%_100%] animate-shimmer text-black flex items-center justify-center rounded-md transition-colors hover:bg-[#8BD520] border-none">
-              <span className="relative z-10">Join Community</span>
-              <span className="ml-2 rounded-full bg-black/10 px-2 py-0.5 text-sm relative z-10">
-                Free
-              </span>
-            </Button>
-            <Link href={"https://github.com/sufiankhan-dev/DevUnity"}>
-              <Button className="h-12 z-10 px-8 border-2 border-[#9CE630] bg-transparent text-[#9CE630] hover:bg-[#9CE630] hover:text-black flex flex-row items-center justify-center">
-                <Github className="mr-2 h-5 w-5" />
-                Star on GitHub
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default Hero;
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Spotlight } from "@/components/ui/spotlight";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import { Github, ArrowRight } from "lucide-react";
+import { BackgroundPattern } from "@/components/BackgroundPattern";
+import { GradientText } from "@/components/GradientText";
+
+const Hero = () => {
+  return (
+    <section className="relative flex min-h-[85vh] items-center overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <BackgroundPattern overlayClassName="bg-gradient-to-b from-zinc-950/20 via-zinc-950/60 to-zinc-950" />
+      </div>
+      <Spotlight
+        className="-top-40 left-0 md:-top-20 md:left-60"
+        fill="#9CE630"
+      />
+
+      <div className="container relative z-10 mx-auto px-4 py-28 md:py-36">
+        <div className="mx-auto max-w-4xl text-center animate-fade-in-up">
+          <h1 className="mb-6 text-4xl font-bold leading-[1.1] tracking-tight text-white md:text-6xl lg:text-7xl">
+            Where developers{" "}
+            <GradientText>connect</GradientText>, learn, and{" "}
+            <span className="relative inline-block">
+              grow
+              <span className="absolute -bottom-1 left-0 h-1 w-full rounded-full bg-gradient-to-r from-brand/80 to-brand-light/40" />
+            </span>
+          </h1>
+
+          <div className="mx-auto mb-10 max-w-2xl [&_div]:mt-0 [&_div_div]:text-lg [&_div_div]:font-normal [&_div_div]:leading-relaxed [&_span]:text-zinc-400">
+            <TextGenerateEffect
+              words="Ask questions, publish blogs, and join a thriving community of builders sharing knowledge — all in one unified platform."
+              duration={0.4}
+            />
+          </div>
+
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link href="/sign-up">
+              <Button
+                size="lg"
+                className="h-12 bg-brand px-8 font-semibold text-zinc-950 shadow-[0_0_30px_-5px_rgba(156,230,48,0.5)] hover:bg-brand-dark"
+              >
+                Join Community
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link
+              href="https://github.com/sufiankhan-dev/DevUnity"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 border-zinc-700 bg-zinc-900/50 px-8 text-zinc-200 backdrop-blur-sm hover:border-brand/40 hover:bg-brand/5 hover:text-brand"
+              >
+                <Github className="mr-2 h-5 w-5" />
+                Star on GitHub
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;

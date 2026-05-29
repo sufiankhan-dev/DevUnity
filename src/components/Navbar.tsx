@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users } from "lucide-react";
-import { CgMenuRight } from "react-icons/cg";
+import { Users, Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -14,6 +13,15 @@ import {
 import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { UserMenu } from "@/components/UserMenu";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+
+const navLinks = [
+  { href: "/community", label: "Community" },
+  { href: "/blogs", label: "Blogs" },
+  { href: "/question", label: "Questions" },
+  { href: "/explore", label: "Explore" },
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,9 +31,6 @@ const Navbar = () => {
 
   const closeSheet = () => setIsOpen(false);
 
-  const linkClasses = (path: string) =>
-    pathname === path ? "text-white" : "text-zinc-400 hover:text-white";
-
   const hiddenRoutes = ["/sign-in", "/sign-up", "/complete-profile"];
 
   if (hiddenRoutes.includes(pathname)) {
@@ -33,96 +38,123 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="border-b z-50 absolute w-full bg-black/50 border-zinc-800">
-      <div className="container mx-auto flex items-center justify-between p-4 lg:px-6">
-        <Link className="flex items-center space-x-2" href="/">
-          <Users className="h-8 w-8 text-[#9CE630]" />
-          <span className="text-xl font-bold text-white">DevUnity</span>
+    <nav className="glass-nav fixed top-0 z-50 w-full">
+      <div className="container mx-auto flex items-center justify-between px-4 py-3 lg:px-6">
+        <Link
+          className="group flex items-center gap-2.5 transition-opacity hover:opacity-90"
+          href="/"
+        >
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand/10 ring-1 ring-brand/20 transition-all group-hover:bg-brand/15 group-hover:ring-brand/30">
+            <Users className="h-5 w-5 text-brand" />
+          </span>
+          <span className="text-lg font-bold tracking-tight text-white">
+            DevUnity
+          </span>
         </Link>
-        <div className="hidden lg:flex items-center space-x-6 flex-grow justify-center">
-          <Link className={linkClasses("/community")} href="/community">
-            Community
-          </Link>
-          <Link className={linkClasses("/blogs")} href="/blogs">
-            Blogs
-          </Link>
-          <Link className={linkClasses("/question")} href="/question">
-            Questions
-          </Link>
-          <Link className={linkClasses("/about")} href="/about">
-            About
-          </Link>
+
+        <div className="hidden lg:flex items-center gap-1 flex-grow justify-center">
+          {navLinks.map(({ href, label }) => {
+            const isActive = pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "relative px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                  isActive
+                    ? "text-white"
+                    : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                )}
+              >
+                {label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 rounded-full bg-brand" />
+                )}
+              </Link>
+            );
+          })}
         </div>
-        <div className="flex items-center space-x-4">
+
+        <div className="flex items-center gap-3">
           {isPending ? (
-            <div className="h-9 w-24 animate-pulse rounded-md bg-zinc-800" />
+            <div className="h-9 w-24 animate-pulse rounded-lg bg-zinc-800" />
           ) : isSignedIn ? (
             <UserMenu />
           ) : (
             <>
-              <Link href="/sign-in">
-                <Button className="text-gray-700 hover:text-black bg-white hover:bg-white/80">
+              <Link href="/sign-in" className="hidden sm:block">
+                <Button
+                  variant="ghost"
+                  className="text-zinc-300 hover:text-white hover:bg-zinc-800/60"
+                >
                   Sign in
                 </Button>
               </Link>
               <Link href="/sign-up">
-                <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520] hidden lg:block">
+                <Button className="bg-brand text-zinc-950 font-semibold hover:bg-brand-dark shadow-[0_0_20px_-5px_rgba(156,230,48,0.4)]">
                   Sign up
                 </Button>
               </Link>
             </>
           )}
+
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="lg:hidden">
-              <CgMenuRight className="h-6 w-6 text-white" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-zinc-300 hover:text-white hover:bg-zinc-800/60"
+                aria-label="Open menu"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="w-[300px] sm:w-[400px] bg-zinc-900 border-none"
+              className="w-[300px] border-zinc-800 bg-zinc-950/95 backdrop-blur-xl"
             >
               <Link href="/" onClick={closeSheet}>
-                <SheetTitle className="text-bold text-white flex items-center">
-                  <Users className="mr-2 text-[#9CE630]" />
+                <SheetTitle className="flex items-center gap-2 text-white">
+                  <Users className="text-brand" />
                   DevUnity
                 </SheetTitle>
               </Link>
-              <nav className="flex flex-col space-y-4 mt-8">
-                <Link
-                  className={linkClasses("/community")}
-                  href="/community"
-                  onClick={closeSheet}
-                >
-                  Community
-                </Link>
-                <Link
-                  className={linkClasses("/blogs")}
-                  href="/blogs"
-                  onClick={closeSheet}
-                >
-                  Blogs
-                </Link>
-                <Link
-                  className={linkClasses("/question")}
-                  href="/question"
-                  onClick={closeSheet}
-                >
-                  Questions
-                </Link>
-                <Link
-                  className={linkClasses("/about")}
-                  href="/about"
-                  onClick={closeSheet}
-                >
-                  About
-                </Link>
-                {!isSignedIn && (
-                  <Link href="/sign-up" onClick={closeSheet}>
-                    <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520] w-full mt-4">
-                      Sign up
+              <Separator className="my-6 bg-zinc-800" />
+              <nav className="flex flex-col gap-1">
+                {navLinks.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={closeSheet}
+                    className={cn(
+                      "rounded-lg px-4 py-3 text-sm font-medium transition-colors",
+                      pathname === href
+                        ? "bg-brand/10 text-brand"
+                        : "text-zinc-400 hover:bg-zinc-800/60 hover:text-white"
+                    )}
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+              {!isSignedIn && (
+                <>
+                  <Separator className="my-6 bg-zinc-800" />
+                  <Link href="/sign-in" onClick={closeSheet}>
+                    <Button
+                      variant="outline"
+                      className="mb-3 w-full border-zinc-700 text-white hover:bg-zinc-800"
+                    >
+                      Sign in
                     </Button>
                   </Link>
-                )}
-              </nav>
+                  <Link href="/sign-up" onClick={closeSheet}>
+                    <Button className="w-full bg-brand text-zinc-950 hover:bg-brand-dark">
+                      Sign up free
+                    </Button>
+                  </Link>
+                </>
+              )}
             </SheetContent>
           </Sheet>
         </div>

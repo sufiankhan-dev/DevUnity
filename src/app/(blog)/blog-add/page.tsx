@@ -4,8 +4,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { BackgroundPattern } from "@/components/BackgroundPattern";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { PageShell } from "@/components/SectionShell";
+import { PageHeader } from "@/components/PageHeader";
+import { SpotlightCard } from "@/components/SpotlightCard";
 import {
   Loader2,
   PenSquare,
@@ -19,11 +23,92 @@ import {
   AlignCenter,
   AlignRight,
   Code,
+  Type,
 } from "lucide-react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
+import { cn } from "@/lib/utils";
+
+type EditorInstance = NonNullable<ReturnType<typeof useEditor>>;
+
+type ToolbarTool = {
+  icon: React.ComponentType<{ className?: string }>;
+  action: (editor: EditorInstance) => void;
+  isActive: (editor: EditorInstance) => boolean;
+};
+
+const toolbarGroups: { label: string; tools: ToolbarTool[] }[] = [
+  {
+    label: "Format",
+    tools: [
+      {
+        icon: Bold,
+        action: (editor) => editor.chain().focus().toggleBold().run(),
+        isActive: (editor) => editor.isActive("bold"),
+      },
+      {
+        icon: Italic,
+        action: (editor) => editor.chain().focus().toggleItalic().run(),
+        isActive: (editor) => editor.isActive("italic"),
+      },
+      {
+        icon: Code,
+        action: (editor) => editor.chain().focus().toggleCodeBlock().run(),
+        isActive: (editor) => editor.isActive("codeBlock"),
+      },
+    ],
+  },
+  {
+    label: "Headings",
+    tools: [
+      {
+        icon: Heading1,
+        action: (editor) =>
+          editor.chain().focus().toggleHeading({ level: 1 }).run(),
+        isActive: (editor) => editor.isActive("heading", { level: 1 }),
+      },
+      {
+        icon: Heading2,
+        action: (editor) =>
+          editor.chain().focus().toggleHeading({ level: 2 }).run(),
+        isActive: (editor) => editor.isActive("heading", { level: 2 }),
+      },
+      {
+        icon: Heading3,
+        action: (editor) =>
+          editor.chain().focus().toggleHeading({ level: 3 }).run(),
+        isActive: (editor) => editor.isActive("heading", { level: 3 }),
+      },
+    ],
+  },
+  {
+    label: "Layout",
+    tools: [
+      {
+        icon: List,
+        action: (editor) => editor.chain().focus().toggleBulletList().run(),
+        isActive: (editor) => editor.isActive("bulletList"),
+      },
+      {
+        icon: AlignLeft,
+        action: (editor) => editor.chain().focus().setTextAlign("left").run(),
+        isActive: (editor) => editor.isActive({ textAlign: "left" }),
+      },
+      {
+        icon: AlignCenter,
+        action: (editor) => editor.chain().focus().setTextAlign("center").run(),
+        isActive: (editor) => editor.isActive({ textAlign: "center" }),
+      },
+      {
+        icon: AlignRight,
+        action: (editor) => editor.chain().focus().setTextAlign("right").run(),
+        isActive: (editor) => editor.isActive({ textAlign: "right" }),
+      },
+    ],
+  },
+];
 
 export default function AddBlogPage() {
   const router = useRouter();
@@ -41,16 +126,12 @@ export default function AddBlogPage() {
     immediatelyRender: false,
     extensions: [
       StarterKit,
-      Heading.configure({
-        levels: [1, 2, 3],
-      }),
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
+      Heading.configure({ levels: [1, 2, 3] }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     editorProps: {
       attributes: {
-        class: "prose prose-invert max-w-none focus:outline-none min-h-[300px]",
+        class: "prose prose-invert max-w-none focus:outline-none min-h-[320px] px-1",
       },
     },
   });
@@ -59,26 +140,17 @@ export default function AddBlogPage() {
     e.preventDefault();
     setLoading(true);
 
-    const blogData = {
-      title,
-      content: editor?.getHTML() || "",
-    };
-
     try {
       const response = await fetch("/api/blogs", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(blogData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content: editor?.getHTML() || "" }),
       });
 
       if (response.ok) {
         router.push("/blogs");
       } else {
-        throw new Error(
-          `Failed to add blog: ${response.status} ${response.statusText}`
-        );
+        throw new Error(`Failed to add blog: ${response.status}`);
       }
     } catch (error) {
       console.error("Error submitting blog:", error);
@@ -88,185 +160,87 @@ export default function AddBlogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <BackgroundPattern />
-      </div>
+    <PageShell withPattern>
+      <div className="container mx-auto max-w-4xl px-4 pb-16">
+        <PageHeader
+          title="Create"
+          highlight="Blog Post"
+          subtitle="Share your knowledge with the DevUnity community."
+          centered
+        />
 
-      <div className="relative z-10 flex-grow flex flex-col max-w-6xl mx-auto w-full">
-        <h1 className="text-3xl font-bold text-center text-white flex items-center justify-center mb-5">
-          <PenSquare className="mr-2 h-6 w-6 text-[#9CE630]" />
-          Create Blog Post
-        </h1>
-
-        <form onSubmit={handleSubmit} className="flex-grow flex flex-col">
-          <div className="mb-6">
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-300 mb-2"
-            >
-              Blog Title
-            </label>
-            <Input
-              id="title"
-              type="text"
-              placeholder="Enter your blog title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="bg-zinc-800 border-zinc-700 text-white text-lg py-3 px-4 rounded-md shadow-sm focus:ring-2 focus:ring-[#9CE630] focus:border-transparent"
-              required
-            />
-          </div>
-
-          <div className="bg-zinc-800 border border-zinc-700 rounded-md p-4 mb-4 flex-grow flex flex-col">
-            <div className="flex flex-wrap gap-2 mb-2">
-              <Button
-                type="button"
-                onClick={() => editor?.chain().focus().toggleBold().run()}
-                className={`p-2 ${
-                  editor?.isActive("bold") ? "bg-zinc-700" : "bg-zinc-800"
-                }`}
-                title="Bold"
-              >
-                <Bold className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() => editor?.chain().focus().toggleItalic().run()}
-                className={`p-2 ${
-                  editor?.isActive("italic") ? "bg-zinc-700" : "bg-zinc-800"
-                }`}
-                title="Italic"
-              >
-                <Italic className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                className={`p-2 ${
-                  editor?.isActive("bulletList") ? "bg-zinc-700" : "bg-zinc-800"
-                }`}
-                title="Bullet List"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() =>
-                  editor?.chain().focus().toggleHeading({ level: 1 }).run()
-                }
-                className={`p-2 ${
-                  editor?.isActive("heading", { level: 1 })
-                    ? "bg-zinc-700"
-                    : "bg-zinc-800"
-                }`}
-                title="Heading 1"
-              >
-                <Heading1 className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() =>
-                  editor?.chain().focus().toggleHeading({ level: 2 }).run()
-                }
-                className={`p-2 ${
-                  editor?.isActive("heading", { level: 2 })
-                    ? "bg-zinc-700"
-                    : "bg-zinc-800"
-                }`}
-                title="Heading 2"
-              >
-                <Heading2 className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() =>
-                  editor?.chain().focus().toggleHeading({ level: 3 }).run()
-                }
-                className={`p-2 ${
-                  editor?.isActive("heading", { level: 3 })
-                    ? "bg-zinc-700"
-                    : "bg-zinc-800"
-                }`}
-                title="Heading 3"
-              >
-                <Heading3 className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() =>
-                  editor?.chain().focus().setTextAlign("left").run()
-                }
-                className={`p-2 ${
-                  editor?.isActive({ textAlign: "left" })
-                    ? "bg-zinc-700"
-                    : "bg-zinc-800"
-                }`}
-                title="Align Left"
-              >
-                <AlignLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() =>
-                  editor?.chain().focus().setTextAlign("center").run()
-                }
-                className={`p-2 ${
-                  editor?.isActive({ textAlign: "center" })
-                    ? "bg-zinc-700"
-                    : "bg-zinc-800"
-                }`}
-                title="Align Center"
-              >
-                <AlignCenter className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() =>
-                  editor?.chain().focus().setTextAlign("right").run()
-                }
-                className={`p-2 ${
-                  editor?.isActive({ textAlign: "right" })
-                    ? "bg-zinc-700"
-                    : "bg-zinc-800"
-                }`}
-                title="Align Right"
-              >
-                <AlignRight className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
-                className={`p-2 ${
-                  editor?.isActive("codeBlock") ? "bg-zinc-700" : "bg-zinc-800"
-                }`}
-                title="Code Block"
-              >
-                <Code className="h-4 w-4" />
-              </Button>
+        <form onSubmit={handleSubmit}>
+          <SpotlightCard className="p-6 md:p-8 mb-6">
+            <div className="space-y-2">
+              <Label htmlFor="title" className="flex items-center gap-2 text-zinc-300">
+                <Type className="h-4 w-4 text-brand" />
+                Title
+              </Label>
+              <Input
+                id="title"
+                type="text"
+                placeholder="Enter a compelling title..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="border-zinc-700 bg-zinc-800/80 text-lg text-white placeholder:text-zinc-500 focus-visible:ring-brand/50"
+                required
+              />
             </div>
-            <EditorContent
-              editor={editor}
-              className="flex-grow overflow-auto text-white"
-            />
-          </div>
+          </SpotlightCard>
+
+          <SpotlightCard className="overflow-hidden mb-6">
+            <div className="border-b border-zinc-800/80 bg-zinc-900/60 p-3">
+              {toolbarGroups.map((group, gi) => (
+                <div key={group.label}>
+                  {gi > 0 && <Separator className="my-2 bg-zinc-800" />}
+                  <div className="flex flex-wrap items-center gap-1">
+                    <span className="mr-2 text-xs font-medium uppercase tracking-wider text-zinc-500">
+                      {group.label}
+                    </span>
+                    {group.tools.map((tool, ti) => (
+                      <Button
+                        key={ti}
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => editor && tool.action(editor)}
+                        className={cn(
+                          "h-8 w-8 text-zinc-400 hover:text-white hover:bg-zinc-800",
+                          editor &&
+                            tool.isActive(editor) &&
+                            "bg-brand/10 text-brand"
+                        )}
+                        title={group.label}
+                      >
+                        <tool.icon className="h-4 w-4" />
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="p-6">
+              <EditorContent editor={editor} className="text-white" />
+            </div>
+          </SpotlightCard>
 
           <Button
             type="submit"
-            className="w-full bg-[#9CE630] text-black hover:bg-[#8BD520] py-3 text-lg font-normal"
+            size="lg"
+            className="w-full bg-brand text-zinc-950 font-semibold hover:bg-brand-dark"
             disabled={loading}
           >
             {loading ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                {/* Publishing... */}
-              </>
+              <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              "Post Blog"
+              <>
+                <PenSquare className="mr-2 h-4 w-4" />
+                Publish Post
+              </>
             )}
           </Button>
         </form>
       </div>
-    </div>
+    </PageShell>
   );
 }

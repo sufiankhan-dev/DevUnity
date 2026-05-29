@@ -3,20 +3,19 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, PenSquare } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, PenSquare, Clock, ArrowRight } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import DOMPurify from "isomorphic-dompurify";
+import { PageShell } from "@/components/SectionShell";
+import { PageHeader } from "@/components/PageHeader";
+import { SpotlightCard } from "@/components/SpotlightCard";
+import { LoadingGrid, SkeletonPulse } from "@/components/LoadingGrid";
+import { EmptyState } from "@/components/EmptyState";
+import { BookOpen } from "lucide-react";
 
 interface BlogPost {
   _id: string;
@@ -27,77 +26,91 @@ interface BlogPost {
   date: string;
 }
 
+function getReadTime(content: string): string {
+  const wordCount = content.replace(/<[^>]+>/g, "").trim().split(/\s+/).length;
+  const minutes = Math.max(1, Math.ceil(wordCount / 200));
+  return `${minutes} min read`;
+}
+
 const BlogCard = ({ post }: { post: BlogPost }) => {
   const sanitizedContent = DOMPurify.sanitize(post.content);
   const plainTextContent = sanitizedContent.replace(/<[^>]+>/g, "");
 
   return (
-    <Card className="bg-zinc-900 border-zinc-800 flex flex-col">
-      <CardHeader>
-        <CardTitle className="text-white">{post.title}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <p className="text-zinc-400 line-clamp-3">{plainTextContent}</p>
-      </CardContent>
-      <CardFooter className="flex justify-between items-center mt-auto">
-        <div className="flex items-center space-x-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src={post.avatar || "/placeholder.svg"}
-              alt={post.author}
-            />
-            <AvatarFallback>
-              {post.author
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-sm font-medium text-white">{post.author}</p>
-            <p className="text-xs text-zinc-400 flex items-center mt-1">
-              <Calendar className="mr-1 h-3 w-3" />
-              {new Date(post.date).toLocaleDateString()}
-            </p>
-          </div>
-        </div>
-        <Link href={`/blogs/${post._id}`}>
-          <Button
-            variant="ghost"
-            className="text-[#9CE630] hover:text-[#8BD520] hover:bg-zinc-800"
+    <SpotlightCard className="flex flex-col h-full">
+      <div className="flex flex-1 flex-col p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <Badge
+            variant="outline"
+            className="border-brand/20 bg-brand/5 text-brand font-normal text-xs"
           >
-            Read More
-          </Button>
-        </Link>
-      </CardFooter>
-    </Card>
+            <Clock className="mr-1 h-3 w-3" />
+            {getReadTime(post.content)}
+          </Badge>
+        </div>
+        <h3 className="mb-3 text-lg font-semibold text-white line-clamp-2 leading-snug">
+          {post.title}
+        </h3>
+        <p className="flex-1 text-sm leading-relaxed text-zinc-400 line-clamp-3">
+          {plainTextContent}
+        </p>
+        <div className="mt-6 flex items-center justify-between border-t border-zinc-800/80 pt-4">
+          <div className="flex items-center gap-2.5">
+            <Avatar className="h-8 w-8 ring-1 ring-zinc-700">
+              <AvatarImage
+                src={post.avatar || "/placeholder.svg"}
+                alt={post.author}
+              />
+              <AvatarFallback className="text-xs">
+                {post.author
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-medium text-white">{post.author}</p>
+              <p className="flex items-center text-xs text-zinc-500">
+                <Calendar className="mr-1 h-3 w-3" />
+                {new Date(post.date).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+          <Link href={`/blogs/${post._id}`}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-brand hover:bg-brand/10 hover:text-brand-light"
+            >
+              Read
+              <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </SpotlightCard>
   );
 };
 
-const SkeletonCard = () => {
-  return (
-    <Card className="bg-zinc-900 border-zinc-800 flex flex-col">
-      <CardHeader>
-        <Skeleton className="h-6 w-2/3 bg-zinc-800" />
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <Skeleton className="h-4 w-full bg-zinc-800 mb-2" />
-        <Skeleton className="h-4 w-full bg-zinc-800 mb-2" />
-        <Skeleton className="h-4 w-4/5 bg-zinc-800" />
-      </CardContent>
-      <CardFooter className="flex justify-between items-center mt-auto">
-        <div className="flex items-center space-x-2">
-          <Skeleton className="h-8 w-8 rounded-full bg-zinc-800" />
-          <div>
-            <Skeleton className="h-4 w-24 bg-zinc-800" />
-            <Skeleton className="h-3 w-16 bg-zinc-800 mt-1" />
-          </div>
+const SkeletonCard = () => (
+  <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/50 p-6">
+    <SkeletonPulse className="mb-4 h-5 w-20" />
+    <SkeletonPulse className="mb-3 h-6 w-3/4" />
+    <SkeletonPulse className="mb-2 h-4 w-full" />
+    <SkeletonPulse className="mb-2 h-4 w-full" />
+    <SkeletonPulse className="mb-6 h-4 w-4/5" />
+    <div className="flex items-center justify-between border-t border-zinc-800/80 pt-4">
+      <div className="flex items-center gap-2">
+        <SkeletonPulse className="h-8 w-8 rounded-full" />
+        <div>
+          <SkeletonPulse className="h-4 w-20 mb-1" />
+          <SkeletonPulse className="h-3 w-16" />
         </div>
-        <Skeleton className="h-9 w-24 bg-zinc-800" />
-      </CardFooter>
-    </Card>
-  );
-};
+      </div>
+      <SkeletonPulse className="h-8 w-16" />
+    </div>
+  </div>
+);
 
 export default function BlogPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -130,42 +143,58 @@ export default function BlogPage() {
         duration: 3000,
         position: "top-center",
         style: {
-          background: "#333",
+          background: "#18181b",
           color: "#fff",
-          border: "1px solid #9CE630",
+          border: "1px solid rgba(156,230,48,0.3)",
         },
       });
     }
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <PageShell withPattern>
       <Toaster />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8 mt-12 md:mt-14">
-          <h1 className="text-2xl md:text-4xl font-bold text-white">
-            Developer Insights
-          </h1>
+      <div className="container mx-auto px-4 pb-16">
+        <PageHeader
+          title="Developer"
+          highlight="Insights"
+          subtitle="Stories, tutorials, and perspectives from the DevUnity community."
+        >
           <Button
-            className="bg-[#9CE630] text-black hover:bg-[#8BD520]"
+            className="bg-brand text-zinc-950 font-semibold hover:bg-brand-dark shadow-[0_0_20px_-5px_rgba(156,230,48,0.3)]"
             onClick={handlePostBlog}
           >
             <PenSquare className="mr-2 h-4 w-4" />
-            <span className="hidden md:inline-block">Share Your Knowledge</span>
-            <span className="md:hidden">Post</span>
+            <span className="hidden md:inline">Share Your Knowledge</span>
+            <span className="md:hidden">Write Post</span>
           </Button>
-        </div>
+        </PageHeader>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-10">
-          {isLoading
-            ? Array.from({ length: 6 }, (_, index) => (
-                <SkeletonCard key={index} />
-              ))
-            : blogPosts.map((post) => (
-                <BlogCard key={post._id} post={post} />
-              ))}
-        </div>
+        {isLoading ? (
+          <LoadingGrid count={6} renderItem={(i) => <SkeletonCard key={i} />} />
+        ) : blogPosts.length === 0 ? (
+          <EmptyState
+            icon={<BookOpen className="h-6 w-6" />}
+            title="No blog posts yet"
+            description="Be the first to share your knowledge with the community."
+            action={
+              <Button
+                className="bg-brand text-zinc-950 hover:bg-brand-dark"
+                onClick={handlePostBlog}
+              >
+                <PenSquare className="mr-2 h-4 w-4" />
+                Write the first post
+              </Button>
+            }
+          />
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {blogPosts.map((post) => (
+              <BlogCard key={post._id} post={post} />
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -5,7 +5,11 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { SkeletonPulse } from "@/components/LoadingGrid";
+import { SpotlightCard } from "@/components/SpotlightCard";
+import { PageShell } from "@/components/SectionShell";
 import {
   ArrowLeft,
   Calendar,
@@ -27,7 +31,7 @@ interface BlogPost {
 function getReadTime(content: string): string {
   const wordCount = content.replace(/<[^>]+>/g, "").trim().split(/\s+/).length;
   const minutes = Math.max(1, Math.ceil(wordCount / 200));
-  return `${minutes} min`;
+  return `${minutes} min read`;
 }
 
 interface Comment {
@@ -74,17 +78,13 @@ export default function BlogPostPage() {
   const [likes, setLikes] = useState(0);
 
   useEffect(() => {
-    if (!postId) {
-      return;
-    }
+    if (!postId) return;
 
     const fetchBlogPost = async () => {
       setIsLoading(true);
       try {
         const response = await fetch(`/api/blogs/${postId}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch blog post");
-        }
+        if (!response.ok) throw new Error("Failed to fetch blog post");
         const data = await response.json();
         setPost(data);
       } catch (err) {
@@ -98,52 +98,74 @@ export default function BlogPostPage() {
     fetchBlogPost();
   }, [postId]);
 
-  if (isLoading) {
-    return <BlogPostSkeleton />;
-  }
+  if (isLoading) return <BlogPostSkeleton />;
 
   if (error) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="w-full max-w-4xl bg-zinc-900 p-6 rounded-lg">
-          <p className="text-red-500 text-center">{error}</p>
-          <div className="mt-4 text-center">
-            <Link href="/blogs">
-              <Button variant="outline" className="mt-4">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog List
+      <PageShell>
+        <div className="flex min-h-[60vh] items-center justify-center px-4">
+          <SpotlightCard className="w-full max-w-md p-8 text-center">
+            <p className="text-red-400">{error}</p>
+            <Link href="/blogs" className="mt-6 inline-block">
+              <Button variant="outline" className="border-zinc-700 text-zinc-300">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blogs
               </Button>
             </Link>
-          </div>
+          </SpotlightCard>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">
-        No blog post found
-      </div>
+      <PageShell>
+        <div className="flex min-h-[60vh] items-center justify-center text-zinc-400">
+          No blog post found
+        </div>
+      </PageShell>
     );
   }
 
   const sanitizedContent = DOMPurify.sanitize(post.content);
 
   return (
-    <div className="min-h-screen bg-zinc-950 py-20">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <Link href="/blogs" className="hidden md:block">
-          <Button variant="outline" className="mb-6">
-            <ArrowLeft className="mr-1 h-4 w-4" /> Back
+    <PageShell withPattern>
+      <div className="container mx-auto max-w-4xl px-4 pb-20 pt-20">
+        <Link href="/blogs" className="mb-8 inline-flex">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-zinc-400 hover:text-white hover:bg-zinc-800/60"
+          >
+            <ArrowLeft className="mr-1.5 h-4 w-4" /> Back to Blogs
           </Button>
         </Link>
-        <article className="bg-zinc-900 rounded-lg overflow-hidden">
-          <header className="p-6 border-b border-zinc-800">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+
+        <article>
+          <header className="mb-8">
+            <div className="mb-4 flex flex-wrap gap-2">
+              <Badge
+                variant="outline"
+                className="border-brand/20 bg-brand/5 text-brand font-normal"
+              >
+                <Clock className="mr-1 h-3 w-3" />
+                {getReadTime(post.content)}
+              </Badge>
+              <Badge variant="outline" className="border-zinc-700 text-zinc-400 font-normal">
+                <Calendar className="mr-1 h-3 w-3" />
+                {new Date(post.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </Badge>
+            </div>
+            <h1 className="text-3xl font-bold leading-tight text-white md:text-4xl lg:text-5xl">
               {post.title}
             </h1>
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-10 w-10">
+            <div className="mt-6 flex items-center gap-3">
+              <Avatar className="h-11 w-11 ring-2 ring-brand/20">
                 <AvatarImage
                   src={post.avatar || "/placeholder.svg"}
                   alt={post.author}
@@ -156,131 +178,99 @@ export default function BlogPostPage() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-medium text-white">{post.author}</p>
-                <div className="flex items-center text-xs text-zinc-400">
-                  <Calendar className="mr-1 h-3 w-3" />
-                  <span>{new Date(post.date).toLocaleDateString()}</span>
-                  <Clock className="ml-2 mr-1 h-3 w-3" />
-                  <span>{getReadTime(post.content)} read</span>
-                </div>
+                <p className="font-medium text-white">{post.author}</p>
+                <p className="text-sm text-zinc-500">Author</p>
               </div>
             </div>
           </header>
-          <div className="p-6">
+
+          <SpotlightCard className="mb-8 p-8 md:p-10">
             <div
-              className="prose prose-invert max-w-none ProseMirror text-zinc-300"
+              className="prose prose-invert max-w-none ProseMirror text-zinc-300 leading-relaxed"
               dangerouslySetInnerHTML={{ __html: sanitizedContent }}
             />
+          </SpotlightCard>
+
+          <div className="mb-10 flex flex-wrap gap-3">
+            <Button
+              className="bg-brand text-zinc-950 hover:bg-brand-dark"
+              onClick={() => setLikes(likes + 1)}
+            >
+              <ThumbsUp className="mr-2 h-4 w-4" />
+              Like ({likes})
+            </Button>
+            <Button
+              variant="outline"
+              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Comment
+            </Button>
           </div>
-          <footer className="p-6 border-t border-zinc-800">
-            <div className="flex items-center space-x-4">
-              <Button
-                className="bg-[#9CE630] text-black hover:bg-[#8BD520]"
-                onClick={() => setLikes(likes + 1)}
-              >
-                <ThumbsUp className="mr-2 h-4 w-4" />
-                Like ({likes})
-              </Button>
-              <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520]">
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Comment
-              </Button>
-            </div>
-          </footer>
         </article>
-        <section className="mt-8 bg-zinc-900 rounded-lg p-6">
-          <h2 className="text-xl font-bold text-white mb-4">Comments</h2>
-          <div className="space-y-6">
+
+        <Separator className="mb-8 bg-zinc-800" />
+
+        <section>
+          <h2 className="mb-6 text-xl font-bold text-white">
+            Comments ({staticComments.length})
+          </h2>
+          <div className="space-y-4">
             {staticComments.map((comment) => (
-              <div
-                key={comment.id}
-                className="border-b border-zinc-800 pb-4 last:border-b-0 last:pb-0"
-              >
-                <div className="flex items-start space-x-3">
-                  <Avatar className="h-8 w-8">
+              <SpotlightCard key={comment.id} className="p-5">
+                <div className="flex items-start gap-3">
+                  <Avatar className="h-9 w-9">
                     <AvatarImage src={comment.avatar} alt={comment.author} />
-                    <AvatarFallback>
+                    <AvatarFallback className="text-xs">
                       {comment.author
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
                       <h3 className="text-sm font-medium text-white">
                         {comment.author}
                       </h3>
-                      <span className="text-xs text-zinc-500">
+                      <span className="shrink-0 text-xs text-zinc-500">
                         {new Date(comment.date).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-zinc-300">
+                    <p className="mt-1.5 text-sm leading-relaxed text-zinc-400">
                       {comment.content}
                     </p>
                   </div>
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
         </section>
       </div>
-    </div>
+    </PageShell>
   );
 }
 
 function BlogPostSkeleton() {
   return (
-    <div className="min-h-screen bg-zinc-950 py-20">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <Skeleton className="w-32 h-10 mb-6 bg-zinc-800 hidden md:block" />
-        <div className="bg-zinc-900 rounded-lg overflow-hidden">
-          <div className="p-6 border-b border-zinc-800">
-            <Skeleton className="h-10 w-3/4 mb-4 bg-zinc-800" />
-            <div className="flex items-center space-x-4">
-              <Skeleton className="h-10 w-10 rounded-full bg-zinc-800" />
-              <div>
-                <Skeleton className="h-4 w-24 mb-2 bg-zinc-800" />
-                <Skeleton className="h-3 w-32 bg-zinc-800" />
-              </div>
-            </div>
-          </div>
-          <div className="p-6">
-            <Skeleton className="h-4 w-full mb-4 bg-zinc-800" />
-            <Skeleton className="h-4 w-full mb-4 bg-zinc-800" />
-            <Skeleton className="h-4 w-full mb-4 bg-zinc-800" />
-            <Skeleton className="h-4 w-3/4 bg-zinc-800" />
-          </div>
-          <div className="p-6 border-t border-zinc-800">
-            <div className="flex items-center space-x-4">
-              <Skeleton className="h-10 w-24 bg-zinc-800" />
-              <Skeleton className="h-10 w-24 bg-zinc-800" />
-            </div>
+    <PageShell>
+      <div className="container mx-auto max-w-4xl px-4 pb-20 pt-20">
+        <SkeletonPulse className="mb-8 h-8 w-32" />
+        <SkeletonPulse className="mb-4 h-6 w-24" />
+        <SkeletonPulse className="mb-6 h-12 w-3/4" />
+        <div className="mb-8 flex items-center gap-3">
+          <SkeletonPulse className="h-11 w-11 rounded-full" />
+          <div>
+            <SkeletonPulse className="mb-1 h-4 w-28" />
+            <SkeletonPulse className="h-3 w-16" />
           </div>
         </div>
-        <div className="mt-8 bg-zinc-900 rounded-lg p-6">
-          <Skeleton className="h-6 w-32 mb-4 bg-zinc-800" />
-          <div className="space-y-6">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="border-b border-zinc-800 pb-4 last:border-b-0 last:pb-0"
-              >
-                <div className="flex items-start space-x-3">
-                  <Skeleton className="h-8 w-8 rounded-full bg-zinc-800" />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <Skeleton className="h-4 w-24 bg-zinc-800" />
-                      <Skeleton className="h-3 w-16 bg-zinc-800" />
-                    </div>
-                    <Skeleton className="h-4 w-full mt-2 bg-zinc-800" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="rounded-xl border border-zinc-800/80 p-8 space-y-4">
+          <SkeletonPulse className="h-4 w-full" />
+          <SkeletonPulse className="h-4 w-full" />
+          <SkeletonPulse className="h-4 w-3/4" />
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

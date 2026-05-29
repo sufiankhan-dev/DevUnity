@@ -1,33 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Github, Linkedin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 import { useSession } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
+import { PageShell } from "@/components/SectionShell";
+import { PageHeader } from "@/components/PageHeader";
+import { SpotlightCard } from "@/components/SpotlightCard";
+import { LoadingGrid, SkeletonPulse } from "@/components/LoadingGrid";
+import { EmptyState } from "@/components/EmptyState";
+import { Github, Linkedin, Users, Sparkles, X } from "lucide-react";
 
 const SkeletonCard = () => (
-  <Card className="bg-zinc-900 border-zinc-800">
-    <CardHeader className="flex flex-col items-center">
-      <Skeleton className="h-20 w-24 rounded-full bg-zinc-800" />
-      <Skeleton className="h-6 w-32 mt-4 bg-zinc-800" />
-      <Skeleton className="h-4 w-24 mt-2 bg-zinc-800" />
-    </CardHeader>
-    <CardContent className="text-center">
-      <Skeleton className="h-4 w-full mb-2 bg-zinc-800" />
-      <Skeleton className="h-4 w-5/6 mx-auto mb-2 bg-zinc-800" />
-      <Skeleton className="h-4 w-4/6 mx-auto mb-4 bg-zinc-800" />
-      <div className="flex justify-center space-x-4">
-        <Skeleton className="h-6 w-6 rounded-full bg-zinc-800" />
-        <Skeleton className="h-6 w-6 rounded-full bg-zinc-800" />
+  <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/50 p-6">
+    <div className="flex flex-col items-center">
+      <SkeletonPulse className="h-24 w-24 rounded-full" />
+      <SkeletonPulse className="mt-4 h-5 w-32" />
+      <SkeletonPulse className="mt-2 h-4 w-24" />
+      <SkeletonPulse className="mt-4 h-4 w-full" />
+      <SkeletonPulse className="mt-2 h-4 w-5/6" />
+      <div className="mt-4 flex gap-3">
+        <SkeletonPulse className="h-8 w-8 rounded-lg" />
+        <SkeletonPulse className="h-8 w-8 rounded-lg" />
       </div>
-    </CardContent>
-  </Card>
+    </div>
+  </div>
 );
 
 export default function CommunityPage() {
@@ -74,8 +75,8 @@ export default function CommunityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 relative overflow-hidden">
-      {showConfetti && (
+    <PageShell withPattern>
+      {showConfetti && typeof window !== "undefined" && (
         <Confetti
           width={window.innerWidth}
           height={window.innerHeight}
@@ -88,108 +89,137 @@ export default function CommunityPage() {
       <AnimatePresence>
         {showWelcome && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm p-4"
           >
-            <div className="bg-zinc-900 p-8 rounded-lg shadow-lg text-center max-w-lg w-full mx-4">
-              <motion.h1
-                initial={{ y: -20 }}
-                animate={{ y: 0 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 120 }}
-                className="text-3xl md:text-4xl font-bold mb-4 text-white"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-brand/20 bg-zinc-900/95 p-8 text-center shadow-[0_0_60px_-10px_rgba(156,230,48,0.2)] backdrop-blur-xl"
+            >
+              <button
+                onClick={handleCloseWelcome}
+                className="absolute right-4 top-4 rounded-lg p-1.5 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white"
+                aria-label="Close welcome modal"
               >
-                Welcome to <span className="text-[#8BD520]">DevUnity,</span>{" "}
+                <X className="h-4 w-4" />
+              </button>
+              <Sparkles className="mx-auto mb-4 h-10 w-10 text-brand" />
+              <h2 className="mb-3 text-2xl font-bold text-white md:text-3xl">
+                Welcome to{" "}
+                <span className="text-brand">DevUnity</span>,{" "}
                 {session?.user?.name || "Developer"}!
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-lg md:text-xl mb-6 text-zinc-300"
-              >
-                Your journey as part of our community begins now. Connect,
-                learn, and grow with fellow developers from around the world.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="mb-6"
-              ></motion.div>
+              </h2>
+              <p className="mb-8 text-zinc-400 leading-relaxed">
+                Your journey begins now. Connect, learn, and grow with fellow
+                developers from around the world.
+              </p>
               <Button
                 onClick={handleCloseWelcome}
-                className="bg-[#9CE630] text-black hover:bg-[#8BD520] text-lg px-8 py-3"
+                size="lg"
+                className="bg-brand px-10 text-zinc-950 font-semibold hover:bg-brand-dark"
               >
-                Let's Get Started
+                Let&apos;s Get Started
               </Button>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-4xl font-bold text-white mt-14">
-          Our Community
-        </h1>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {isLoading
-            ? Array(6)
-                .fill(0)
-                .map((_, index) => <SkeletonCard key={index} />)
-            : users.map((profile) => (
-                <Card key={profile.id} className="bg-zinc-900 border-zinc-800">
-                  <CardHeader className="flex flex-col items-center">
-                    <Avatar className="h-24 w-24">
-                      <AvatarImage
-                        src={profile.profileImage}
-                        alt={profile.username}
-                      />
-                      <AvatarFallback>
-                        {profile.username
-                          .split(" ")
-                          .map((n: string) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <CardTitle className="mt-4 text-white">
-                      {profile.username}
-                    </CardTitle>
-                    <p className="text-sm text-zinc-400">{profile.role}</p>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <p className="mb-4 text-zinc-400">{profile.description}</p>
-                    <div className="flex justify-center space-x-4">
-                      {profile.github && (
-                        <Link
-                          href={profile.github}
-                          className="text-zinc-400 hover:text-[#8BD520]"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Github className="h-6 w-6" />
-                          <span className="sr-only">GitHub</span>
-                        </Link>
-                      )}
-                      {profile.linkedin && (
-                        <Link
-                          href={profile.linkedin}
-                          className="text-zinc-400 hover:text-[#8BD520]"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Linkedin className="h-6 w-6" />
-                          <span className="sr-only">LinkedIn</span>
-                        </Link>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-        </div>
+      <div className="container mx-auto px-4 pb-16">
+        <PageHeader
+          title="Our"
+          highlight="Community"
+          subtitle="Meet the developers building, sharing, and growing together on DevUnity."
+        />
+
+        {!isLoading && users.length > 0 && (
+          <Badge
+            variant="outline"
+            className="mb-8 border-brand/20 bg-brand/5 text-brand"
+          >
+            <Users className="mr-1.5 h-3.5 w-3.5" />
+            {users.length} member{users.length !== 1 ? "s" : ""}
+          </Badge>
+        )}
+
+        {isLoading ? (
+          <LoadingGrid count={6} renderItem={(i) => <SkeletonCard key={i} />} />
+        ) : users.length === 0 ? (
+          <EmptyState
+            icon={<Users className="h-6 w-6" />}
+            title="No members yet"
+            description="Be the first to complete your profile and join the community."
+            action={
+              <Link href="/sign-up">
+                <Button className="bg-brand text-zinc-950 hover:bg-brand-dark">
+                  Join DevUnity
+                </Button>
+              </Link>
+            }
+          />
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {users.map((profile) => (
+              <SpotlightCard key={profile.id} className="p-6">
+                <div className="flex flex-col items-center text-center">
+                  <Avatar className="h-24 w-24 ring-2 ring-brand/20 ring-offset-2 ring-offset-zinc-900">
+                    <AvatarImage
+                      src={profile.profileImage}
+                      alt={profile.username}
+                    />
+                    <AvatarFallback className="bg-zinc-800 text-lg">
+                      {profile.username
+                        .split(" ")
+                        .map((n: string) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="mt-4 text-lg font-semibold text-white">
+                    {profile.username}
+                  </h3>
+                  <Badge
+                    variant="outline"
+                    className="mt-1.5 border-zinc-700 text-zinc-400 font-normal"
+                  >
+                    {profile.role}
+                  </Badge>
+                  <p className="mt-4 text-sm leading-relaxed text-zinc-400 line-clamp-3">
+                    {profile.description}
+                  </p>
+                  <div className="mt-5 flex gap-3">
+                    {profile.github && (
+                      <Link
+                        href={profile.github}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700/80 text-zinc-400 transition-all hover:border-brand/30 hover:bg-brand/5 hover:text-brand"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Github className="h-4 w-4" />
+                        <span className="sr-only">GitHub</span>
+                      </Link>
+                    )}
+                    {profile.linkedin && (
+                      <Link
+                        href={profile.linkedin}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700/80 text-zinc-400 transition-all hover:border-brand/30 hover:bg-brand/5 hover:text-brand"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                        <span className="sr-only">LinkedIn</span>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </SpotlightCard>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </PageShell>
   );
 }
