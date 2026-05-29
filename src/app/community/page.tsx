@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,7 +8,7 @@ import { Github, Linkedin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
 const SkeletonCard = () => (
@@ -34,10 +33,20 @@ const SkeletonCard = () => (
 export default function CommunityPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showWelcome, setShowWelcome] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const { user } = useUser();
-  const router = useRouter();
+  const [{ showWelcome, showConfetti }, setWelcomeState] = useState(() => {
+    if (typeof window === "undefined") {
+      return { showWelcome: false, showConfetti: false };
+    }
+
+    const fromCompleteProfile = localStorage.getItem("fromCompleteProfile");
+    if (fromCompleteProfile === "true") {
+      localStorage.removeItem("fromCompleteProfile");
+      return { showWelcome: true, showConfetti: true };
+    }
+
+    return { showWelcome: false, showConfetti: false };
+  });
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -54,18 +63,14 @@ export default function CommunityPage() {
     };
 
     fetchUsers();
-
-    const fromCompleteProfile = localStorage.getItem("fromCompleteProfile");
-    if (fromCompleteProfile === "true") {
-      setShowWelcome(true);
-      setShowConfetti(true);
-      localStorage.removeItem("fromCompleteProfile");
-    }
   }, []);
 
   const handleCloseWelcome = () => {
-    setShowWelcome(false);
-    setTimeout(() => setShowConfetti(false), 1500);
+    setWelcomeState({ showWelcome: false, showConfetti: true });
+    setTimeout(
+      () => setWelcomeState((state) => ({ ...state, showConfetti: false })),
+      1500
+    );
   };
 
   return (
@@ -97,7 +102,7 @@ export default function CommunityPage() {
                 className="text-3xl md:text-4xl font-bold mb-4 text-white"
               >
                 Welcome to <span className="text-[#8BD520]">DevUnity,</span>{" "}
-                {user?.fullName || "Developer"}!
+                {session?.user?.name || "Developer"}!
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -134,32 +139,32 @@ export default function CommunityPage() {
             ? Array(6)
                 .fill(0)
                 .map((_, index) => <SkeletonCard key={index} />)
-            : users.map((user, index) => (
-                <Card key={index} className="bg-zinc-900 border-zinc-800">
+            : users.map((profile) => (
+                <Card key={profile.id} className="bg-zinc-900 border-zinc-800">
                   <CardHeader className="flex flex-col items-center">
                     <Avatar className="h-24 w-24">
                       <AvatarImage
-                        src={user.profileImage}
-                        alt={user.username}
+                        src={profile.profileImage}
+                        alt={profile.username}
                       />
                       <AvatarFallback>
-                        {user.username
+                        {profile.username
                           .split(" ")
                           .map((n: string) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <CardTitle className="mt-4 text-white">
-                      {user.username}
+                      {profile.username}
                     </CardTitle>
-                    <p className="text-sm text-zinc-400">{user.role}</p>
+                    <p className="text-sm text-zinc-400">{profile.role}</p>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <p className="mb-4 text-zinc-400">{user.description}</p>
+                    <p className="mb-4 text-zinc-400">{profile.description}</p>
                     <div className="flex justify-center space-x-4">
-                      {user.github && (
+                      {profile.github && (
                         <Link
-                          href={user.github}
+                          href={profile.github}
                           className="text-zinc-400 hover:text-[#8BD520]"
                           target="_blank"
                           rel="noopener noreferrer"
@@ -168,9 +173,9 @@ export default function CommunityPage() {
                           <span className="sr-only">GitHub</span>
                         </Link>
                       )}
-                      {user.linkedin && (
+                      {profile.linkedin && (
                         <Link
-                          href={user.linkedin}
+                          href={profile.linkedin}
                           className="text-zinc-400 hover:text-[#8BD520]"
                           target="_blank"
                           rel="noopener noreferrer"

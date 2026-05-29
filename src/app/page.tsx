@@ -1,19 +1,8 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { MessageSquare, Users, BookOpen, Github } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import OpenSourceSection from "@/components/OpenSource";
 
-export default function Component() {
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-zinc-950">
       <div
@@ -25,7 +14,6 @@ export default function Component() {
       <Hero />
       <Features />
       <OpenSourceSection />
-      {/* <Footer /> */}
     </div>
   );
 }

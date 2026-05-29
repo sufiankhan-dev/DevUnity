@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useUser } from "@clerk/nextjs";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { BackgroundPattern } from "@/components/BackgroundPattern";
 import { Input } from "@/components/ui/input";
 import {
   Loader2,
@@ -27,11 +27,18 @@ import TextAlign from "@tiptap/extension-text-align";
 
 export default function AddBlogPage() {
   const router = useRouter();
-  const { user } = useUser();
+  const { data: session, isPending } = useSession();
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (!isPending && !session?.user) {
+      router.push("/sign-in");
+    }
+  }, [isPending, session, router]);
+
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Heading.configure({
@@ -55,8 +62,6 @@ export default function AddBlogPage() {
     const blogData = {
       title,
       content: editor?.getHTML() || "",
-      author: user?.fullName || "Anonymous",
-      avatar: user?.imageUrl || "",
     };
 
     try {
@@ -85,14 +90,7 @@ export default function AddBlogPage() {
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/background-pattern.png"
-          alt="Background Pattern"
-          layout="fill"
-          objectFit="cover"
-          quality={100}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/70 to-zinc-950" />
+        <BackgroundPattern />
       </div>
 
       <div className="relative z-10 flex-grow flex flex-col max-w-6xl mx-auto w-full">

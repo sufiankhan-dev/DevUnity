@@ -1,22 +1,13 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { BackgroundPattern } from "@/components/BackgroundPattern";
 
 const Hero = () => {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/background-pattern.png"
-          alt="Background Pattern"
-          fill
-          style={{ objectFit: "cover" }}
-          objectFit="cover"
-          quality={100}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/70 to-zinc-950" />
+        <BackgroundPattern />
       </div>
 
       <div className="container relative z-10 mx-auto px-4 py-24 md:py-32 mt-16 text-center">

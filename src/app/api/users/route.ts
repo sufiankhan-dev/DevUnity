@@ -1,25 +1,47 @@
+import { desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
+import { db } from "@/db";
+import { communityProfiles } from "@/db/schema";
+import { getSession } from "@/lib/auth-server";
 
 export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { username, role, description, linkedin, github, profileImageUrl } =
       await req.json();
 
-    const db = await connectToDatabase();
-    const usersCollection = db.collection("community");
+    if (!role?.trim() || !description?.trim()) {
+      return NextResponse.json(
+        { message: "Role and description are required" },
+        { status: 400 }
+      );
+    }
 
-    const newUser = {
-      username,
+    const [existingProfile] = await db
+      .select({ id: communityProfiles.id })
+      .from(communityProfiles)
+      .where(eq(communityProfiles.userId, session.user.id));
+
+    if (existingProfile) {
+      return NextResponse.json(
+        { message: "Profile already exists" },
+        { status: 409 }
+      );
+    }
+
+    await db.insert(communityProfiles).values({
+      userId: session.user.id,
+      username: username || session.user.name,
       description,
       role,
-      linkedin,
-      github,
-      profileImage: profileImageUrl,
-      createdAt: new Date(),
-    };
-
-    await usersCollection.insertOne(newUser);
+      linkedin: linkedin || null,
+      github: github || null,
+      profileImage: profileImageUrl || session.user.image || null,
+    });
 
     return NextResponse.json(
       { message: "Profile saved successfully" },
@@ -34,14 +56,14 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const db = await connectToDatabase();
-    const usersCollection = db.collection("community");
+    const profiles = await db
+      .select()
+      .from(communityProfiles)
+      .orderBy(desc(communityProfiles.createdAt));
 
-    const users = await usersCollection.find({}).toArray();
-
-    return NextResponse.json(users, { status: 200 });
+    return NextResponse.json(profiles, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(

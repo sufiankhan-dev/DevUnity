@@ -1,6 +1,5 @@
-import React from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { BackgroundPattern } from "@/components/BackgroundPattern";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, MessageSquare, BookOpen, Code, ArrowRight } from "lucide-react";
 
@@ -31,14 +30,7 @@ export default function AboutPage() {
   return (
     <div className="relative min-h-screen bg-zinc-950 overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/background-pattern.png"
-          alt="Background Pattern"
-          layout="fill"
-          objectFit="cover"
-          quality={100}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/70 to-zinc-950" />
+        <BackgroundPattern />
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-16">

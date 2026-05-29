@@ -22,7 +22,12 @@ interface BlogPost {
   author: string;
   avatar: string;
   date: string;
-  readTime: string;
+}
+
+function getReadTime(content: string): string {
+  const wordCount = content.replace(/<[^>]+>/g, "").trim().split(/\s+/).length;
+  const minutes = Math.max(1, Math.ceil(wordCount / 200));
+  return `${minutes} min`;
 }
 
 interface Comment {
@@ -60,21 +65,23 @@ const staticComments: Comment[] = [
 
 export default function BlogPostPage() {
   const { id } = useParams();
+  const postId = typeof id === "string" ? id : Array.isArray(id) ? id[0] : undefined;
   const [post, setPost] = useState<BlogPost | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(Boolean(postId));
+  const [error, setError] = useState<string | null>(
+    postId ? null : "Invalid post ID"
+  );
   const [likes, setLikes] = useState(0);
 
   useEffect(() => {
-    if (!id) {
-      setError("Invalid post ID");
+    if (!postId) {
       return;
     }
 
     const fetchBlogPost = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/blogs/${id}`);
+        const response = await fetch(`/api/blogs/${postId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch blog post");
         }
@@ -89,7 +96,7 @@ export default function BlogPostPage() {
     };
 
     fetchBlogPost();
-  }, [id]);
+  }, [postId]);
 
   if (isLoading) {
     return <BlogPostSkeleton />;
@@ -154,7 +161,7 @@ export default function BlogPostPage() {
                   <Calendar className="mr-1 h-3 w-3" />
                   <span>{new Date(post.date).toLocaleDateString()}</span>
                   <Clock className="ml-2 mr-1 h-3 w-3" />
-                  <span>{post.readTime} read</span>
+                  <span>{getReadTime(post.content)} read</span>
                 </div>
               </div>
             </div>

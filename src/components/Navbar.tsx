@@ -12,16 +12,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
-import { useUser, UserButton } from "@clerk/nextjs";
+import { useSession } from "@/lib/auth-client";
+import { UserMenu } from "@/components/UserMenu";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const { isSignedIn, user } = useUser();
+  const { data: session, isPending } = useSession();
+  const isSignedIn = Boolean(session?.user);
 
   const closeSheet = () => setIsOpen(false);
 
-  const linkClasses = (path: any) =>
+  const linkClasses = (path: string) =>
     pathname === path ? "text-white" : "text-zinc-400 hover:text-white";
 
   const hiddenRoutes = ["/sign-in", "/sign-up", "/complete-profile"];
@@ -38,9 +40,6 @@ const Navbar = () => {
           <span className="text-xl font-bold text-white">DevUnity</span>
         </Link>
         <div className="hidden lg:flex items-center space-x-6 flex-grow justify-center">
-          {/* <Link className={linkClasses("/explore")} href="/explore">
-            Explore
-          </Link> */}
           <Link className={linkClasses("/community")} href="/community">
             Community
           </Link>
@@ -55,21 +54,18 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex items-center space-x-4">
-          {isSignedIn ? (
-            <div className="flex justify-center items-center">
-              <UserButton />
-              <span className="font-semibold text-gray-100 text-base ml-3 hidden lg:block">
-                {user.fullName}
-              </span>
-            </div>
+          {isPending ? (
+            <div className="h-9 w-24 animate-pulse rounded-md bg-zinc-800" />
+          ) : isSignedIn ? (
+            <UserMenu />
           ) : (
             <>
-              <Link href={"/sign-in"}>
+              <Link href="/sign-in">
                 <Button className="text-gray-700 hover:text-black bg-white hover:bg-white/80">
                   Sign in
                 </Button>
               </Link>
-              <Link href={"/sign-up"}>
+              <Link href="/sign-up">
                 <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520] hidden lg:block">
                   Sign up
                 </Button>
@@ -91,13 +87,6 @@ const Navbar = () => {
                 </SheetTitle>
               </Link>
               <nav className="flex flex-col space-y-4 mt-8">
-                {/* <Link
-                  className={linkClasses("/explore")}
-                  href="/explore"
-                  onClick={closeSheet}
-                >
-                  Explore
-                </Link> */}
                 <Link
                   className={linkClasses("/community")}
                   href="/community"
@@ -127,11 +116,8 @@ const Navbar = () => {
                   About
                 </Link>
                 {!isSignedIn && (
-                  <Link href={"sign-up"}>
-                    <Button
-                      className="bg-[#9CE630] text-black hover:bg-[#8BD520] w-full mt-4"
-                      onClick={closeSheet}
-                    >
+                  <Link href="/sign-up" onClick={closeSheet}>
+                    <Button className="bg-[#9CE630] text-black hover:bg-[#8BD520] w-full mt-4">
                       Sign up
                     </Button>
                   </Link>

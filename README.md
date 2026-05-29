@@ -1,99 +1,162 @@
 # DevUnity
 
-DevUnity is an open-source platform built with Next.js and TypeScript that enables developers to connect, collaborate, and share knowledge. Whether you're looking for a place to ask questions, collaborate on projects, write blogs, or discuss new ideas, DevUnity is the community hub for developers.
+DevUnity is an open-source developer community platform built with Next.js and TypeScript. Developers can share technical blogs, browse community profiles, and participate in Q&A-style discussions.
 
 <p align="center">
   <kbd>
-    <img src="https://github.com/user-attachments/assets/6ed17203-5b81-43db-baf7-eb003c2035b0"></img>
+    <img src="https://github.com/user-attachments/assets/6ed17203-5b81-43db-baf7-eb003c2035b0" alt="DevUnity preview" />
   </kbd>
 </p>
 
-## Features!
+## Features
 
-
-- **Community-driven Discussions**: A space for developers to ask questions, share knowledge, and help each other grow.
-- **Collaborate on Projects**: Work together with other developers on open-source projects or new ideas.
-- **Write Blogs**: Share your technical knowledge and experiences through blog posts.
-- **Simple UI**: Designed with [ShadCN UI](https://github.com/shadcn) and [Accertinty UI](https://github.com/accertinty) for a clean and intuitive user experience.
-- **Future Enhancements**: Plans for adding user authentication and database integration to store posts and user data.
+- **Blogs** — Write and read technical posts with a rich-text editor (TipTap). Posts are stored in Neon Postgres via Drizzle ORM.
+- **Community profiles** — Create a developer profile with role, bio, GitHub, and LinkedIn links after signing up.
+- **Authentication** — Email/password auth powered by [Better Auth](https://www.better-auth.com), with onboarding at `/complete-profile`.
+- **Questions** — Q&A UI for browsing and posting questions (currently client-side mock data; persistence coming soon).
+- **Modern UI** — Dark theme with [shadcn/ui](https://ui.shadcn.com) components and Tailwind CSS.
 
 ## Tech Stack
 
-- **Next.js**: A React framework for building server-side rendered (SSR) web applications.
-- **TypeScript**: Type-safe JavaScript for building scalable applications.
-- **ShadCN UI**: A UI component library for building modern, accessible components.
-- **Accertinty UI**: Another UI component library used for creating customizable interfaces.
+| Layer        | Technology                          |
+| ------------ | ----------------------------------- |
+| Framework    | [Next.js 16](https://nextjs.org) (App Router, Turbopack) |
+| Language     | TypeScript                          |
+| UI           | React 19, Tailwind CSS v4, shadcn/ui |
+| Auth         | [Better Auth](https://www.better-auth.com) |
+| Database     | [Neon Postgres](https://neon.tech)  |
+| ORM          | [Drizzle ORM](https://orm.drizzle.team) |
+| Rich text    | TipTap                              |
+| Animations   | Framer Motion, react-confetti       |
 
-## Setup
+## Prerequisites
 
-1. Clone the repository:
+- [Node.js](https://nodejs.org) 20.9+
+- A [Neon](https://neon.tech) Postgres database
+- A `BETTER_AUTH_SECRET` (32+ characters)
 
-   ```bash
-   git clone https://github.com/sufiankhan-dev/DevUnity.git
+## Getting Started
 
-2. Navigate to the project directory:
+### 1. Clone the repository
 
-   ```bash
-   cd devunity
-
-3. Install the dependencies:
-
-  ```bash
-   npm install
+```bash
+git clone https://github.com/sufiankhan-dev/DevUnity.git
+cd DevUnity
 ```
 
+### 2. Install dependencies
 
-4. Start the development server:
+```bash
+npm install
+```
 
-   ```bash
-   npm run dev
+### 3. Configure environment variables
 
-5. Open the application in your browser at [http://localhost:3000](http://localhost:3000).
+Copy [`.env.example`](.env.example) to `.env.local` and fill in your values:
 
+```env
+DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/devunity?sslmode=require
+BETTER_AUTH_SECRET=your-32-character-or-longer-secret-key-here
+BETTER_AUTH_URL=http://localhost:3000
+```
 
-Contributing
-------------
+### 4. Set up the database
 
-We welcome contributions from the community! If you want to contribute to DevUnity, follow these steps:
+Push the schema to Neon (recommended for development):
 
-1.  Fork the repository.
-    
-2.  Create a new branch for your feature or bug fix (git checkout -b feature/your-feature).
-    
-3.  Make your changes.
-    
-4.  Commit your changes (git commit -am 'Add new feature').
-    
-5.  Push to your branch (git push origin feature/your-feature).
-    
-6.  Open a pull request to the main repository.
-    
+```bash
+npm run db:push
+```
 
-Please ensure your code follows the project’s coding style and includes tests where applicable.
+Or apply the included SQL migration manually / via Drizzle Kit:
 
-Roadmap
--------
+```bash
+npm run db:migrate
+```
 
-*   Add user authentication (login, signup, etc.)
-    
-*   Integrate a database for storing posts, user data, and other content.
-    
-*   Add real-time chat or messaging features for collaboration.
-    
-*   Add additional UI components for a better user experience.
-    
+### 5. Run the development server
 
-License
--------
+```bash
+npm run dev
+```
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Acknowledgements
-----------------
+## Styling
 
-*   [ShadCN UI](https://github.com/shadcn)
-    
-*   [Accertinty UI](https://github.com/accertinty)
-    
+This project uses **Tailwind CSS v4** with CSS-based configuration (no `tailwind.config.ts`). Theme tokens, animations, and shadcn/ui colors are defined in `src/app/globals.css` via `@theme inline`. PostCSS is configured with `@tailwindcss/postcss` per the [Next.js CSS guide](https://nextjs.org/docs/app/getting-started/css).
 
-Feel free to open issues for suggestions, improvements, or bugs! Let's make DevUnity a great space for developers to collaborate and grow together!
+## Scripts
+
+| Command              | Description                    |
+| -------------------- | ------------------------------ |
+| `npm run dev`        | Start development server       |
+| `npm run build`      | Create production build        |
+| `npm run start`      | Run production server          |
+| `npm run lint`       | Run ESLint                     |
+| `npm run db:push`    | Push Drizzle schema to Neon    |
+| `npm run db:generate`| Generate Drizzle migrations    |
+| `npm run db:migrate` | Run Drizzle migrations         |
+| `npm run db:studio`  | Open Drizzle Studio            |
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (auth)/          # Sign in, sign up, complete profile
+│   ├── (blog)/          # Blog list, single post, create post
+│   ├── api/
+│   │   ├── auth/        # Better Auth handler
+│   │   ├── blogs/       # Blog CRUD API
+│   │   └── users/       # Community profiles API
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+├── db/
+│   ├── index.ts         # Drizzle + Neon client
+│   └── schema/          # Auth + app tables
+└── lib/
+    ├── auth.ts          # Better Auth server config
+    ├── auth-client.ts   # Client hooks (useSession, signIn, etc.)
+    └── auth-server.ts   # Server session helper
+```
+
+## API Routes
+
+| Method | Endpoint           | Auth     | Description              |
+| ------ | ------------------ | -------- | ------------------------ |
+| *      | `/api/auth/*`      | —        | Better Auth endpoints    |
+| GET    | `/api/blogs`       | Public   | List all blog posts      |
+| POST   | `/api/blogs`       | Required | Create a new blog post   |
+| GET    | `/api/blogs/[id]`  | Public   | Get a single blog post   |
+| GET    | `/api/users`       | Public   | List community profiles  |
+| POST   | `/api/users`       | Required | Create a community profile |
+
+## Deployment
+
+DevUnity deploys on [Vercel](https://vercel.com). Set `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL` (your production URL) in Vercel environment variables, then run migrations against your Neon database.
+
+## Roadmap
+
+- [ ] Persist questions and answers to the database
+- [ ] Blog comments and likes persistence
+- [ ] OAuth providers (GitHub, Google) via Better Auth
+- [ ] Real-time chat or messaging
+- [ ] Legal pages (privacy, terms, cookies)
+
+## Contributing
+
+Contributions are welcome. Fork the repo, create a feature branch, and open a pull request.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+## Acknowledgements
+
+- [shadcn/ui](https://ui.shadcn.com)
+- [Better Auth](https://www.better-auth.com)
+- [Neon](https://neon.tech)
+- [Drizzle ORM](https://orm.drizzle.team)
+- [TipTap](https://tiptap.dev)

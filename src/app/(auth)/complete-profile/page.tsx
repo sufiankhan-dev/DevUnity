@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { BackgroundPattern } from "@/components/BackgroundPattern";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,18 +17,19 @@ import {
   ImageIcon,
   Loader2,
 } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "@/lib/auth-client";
+import { useEffect } from "react";
 
 const CompleteProfile = () => {
   const router = useRouter();
-  const { user } = useUser();
+  const { data: session, isPending } = useSession();
   const [formData, setFormData] = useState({
-    username: user?.fullName || "Anonymous",
+    username: "",
     role: "",
     description: "",
     linkedin: "",
     github: "",
-    profileImageUrl: user?.imageUrl || "",
+    profileImageUrl: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -36,6 +37,12 @@ const CompleteProfile = () => {
     role: "",
     description: "",
   });
+
+  useEffect(() => {
+    if (!isPending && !session?.user) {
+      router.push("/sign-in");
+    }
+  }, [isPending, session, router]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -81,7 +88,12 @@ const CompleteProfile = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          username: formData.username || session?.user?.name || "Anonymous",
+          profileImageUrl:
+            formData.profileImageUrl || session?.user?.image || "",
+        }),
       });
 
       if (response.ok) {
@@ -104,14 +116,7 @@ const CompleteProfile = () => {
   return (
     <div className="min-h-screen flex items-center py-5 justify-center bg-zinc-950 text-white relative overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/background-pattern.png"
-          alt="Background Pattern"
-          layout="fill"
-          objectFit="cover"
-          quality={100}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/70 to-zinc-950" />
+        <BackgroundPattern />
       </div>
 
       <Card className="w-full max-w-md bg-zinc-900/80 border-zinc-800 backdrop-blur-sm shadow-xl relative z-10">

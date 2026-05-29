@@ -1,34 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
-import { connectToDatabase } from "@/lib/db";
+import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import { db } from "@/db";
+import { blogs } from "@/db/schema";
 
 export async function GET(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
 
-  if (!ObjectId.isValid(id)) {
+  if (!id) {
     return NextResponse.json(
-      { success: false, error: "Invalid blog ID format" },
+      { success: false, error: "Invalid blog ID" },
       { status: 400 }
     );
   }
 
   try {
-    const db = await connectToDatabase();
-    const collection = db.collection("blogs");
+    const [blog] = await db.select().from(blogs).where(eq(blogs.id, id));
 
-    const blog = await collection.findOne({ _id: new ObjectId(id) });
-
-    if (blog) {
-      return NextResponse.json(blog);
-    } else {
+    if (!blog) {
       return NextResponse.json(
         { success: false, error: "Blog post not found" },
         { status: 404 }
       );
     }
+
+    return NextResponse.json({
+      _id: blog.id,
+      title: blog.title,
+      content: blog.content,
+      author: blog.author,
+      avatar: blog.avatar,
+      date: blog.createdAt,
+    });
   } catch (error) {
     console.error("Error fetching blog post:", error);
     return NextResponse.json(
